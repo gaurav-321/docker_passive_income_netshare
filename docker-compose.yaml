@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  honeygain:
+    image: honeygain/honeygain
+    container_name: honeygain
+    command: >
+      -tou-accept
+      -email your_email@example.com      # <-- Replace with your Honeygain email
+      -pass your_password                # <-- Replace with your Honeygain password
+      -device ubuntu_server1
+      setup
+    restart: always
+
+  earnapp:
+    image: madereddy/earnapp
+    container_name: earnapp
+    environment:
+      - EARNAPP_UUID=your_uuid_here       # <-- Replace with your EarnApp UUID
+    restart: unless-stopped
+
+  psclient:
+    image: packetstream/psclient:latest
+    environment:
+      - CID=your_cid_here                 # <-- Replace with your PacketStream CID
+    container_name: packetstream
+    restart: always
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      --cleanup
+      --include-stopped
+      --include-restarting
+      --revive-stopped
+      --interval 60
+    restart: always
+    container_name: watchtower
+
+  pawns-cli:
+    image: iproyal/pawns-cli:latest
+    container_name: pawns
+    command: >
+      -email=your_email@example.com       # <-- Replace with your IPRoyal email
+      -password=your_password             # <-- Replace with your IPRoyal password
+      -device-name=ubuntu_server
+      -device-id=ubuntu_server
+      -accept-tos
+    restart: always
+
+  earnfm-client:
+    image: earnfm/earnfm-client:latest
+    container_name: earnfm
+    environment:
+      - EARNFM_TOKEN=your_token_here       # <-- Replace with your EarnFM token
+    restart: always
+
+  repocket:
+    image: repocket/repocket
+    container_name: repocket
+    environment:
+      - RP_EMAIL=your_email@example.com    # <-- Replace with your Repocket email
+      - RP_API_KEY=your_api_key_here       # <-- Replace with your Repocket API key
+    restart: always
+
+  traffmonetizer:
+    image: traffmonetizer/cli_v2
+    container_name: traffmonetizer
+    command: start accept --token your_token_here   # <-- Replace with your Traffmonetizer token
+    stdin_open: true
+    restart: always
